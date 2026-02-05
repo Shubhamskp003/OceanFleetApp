@@ -3,15 +3,15 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * OceanFleetApp UC2 - Store Vessel Records Using List
  * OceanFleetApp UC3 - Retrieve Vessel by Vessel ID
+ * OceanFleetApp UC4 - Identify High-Performance Vessels
  *
  * @Developer
- * @version 2.0
  * @version 3.0
+ * @version 4.0
  */
 
-// Utility class
+// Utility Class
 class VesselUtil {
 
     private List<Vessel> vesselList;
@@ -40,7 +40,7 @@ class VesselUtil {
         }
     }
 
-    // UC3 — Search by ID
+    // UC3 — Retrieve by ID
     public Vessel getVesselByID(String id) {
         for (Vessel vessel : vesselList) {
             if (vessel.getVesselId().equalsIgnoreCase(id)) {
@@ -49,9 +49,33 @@ class VesselUtil {
         }
         return null;
     }
+
+    // UC4 — Identify High Performance Vessels
+    public List<Vessel> getHighPerformanceVessels() {
+
+        List<Vessel> result = new ArrayList<>();
+
+        if (vesselList.isEmpty()) return result;
+
+        double maxSpeed = vesselList.get(0).getAverageSpeed();
+
+        for (Vessel vessel : vesselList) {
+            if (vessel.getAverageSpeed() > maxSpeed) {
+                maxSpeed = vessel.getAverageSpeed();
+            }
+        }
+
+        for (Vessel vessel : vesselList) {
+            if (vessel.getAverageSpeed() == maxSpeed) {
+                result.add(vessel);
+            }
+        }
+
+        return result;
+    }
 }
 
-// Data Model
+// Vessel Model
 class Vessel {
 
     private String vesselId;
@@ -83,7 +107,7 @@ class Vessel {
     }
 }
 
-// Main App
+// Main Application
 public class OceanFleetApp {
 
     public static void main(String[] args) {
@@ -112,28 +136,43 @@ public class OceanFleetApp {
             System.out.print("Vessel Type: ");
             String type = scanner.nextLine();
 
-            Vessel vessel = new Vessel(id, name, speed, type);
-            vesselUtil.addVessel(vessel);
+            vesselUtil.addVessel(new Vessel(id, name, speed, type));
         }
 
-        System.out.println("\nAll Stored Vessel Records:");
+        System.out.println("\nAll Stored Vessels:");
         vesselUtil.displayAllVessels();
 
-        // UC3 Search Feature
-        System.out.println("\nSearch Vessel By ID");
-        System.out.print("Enter Vessel ID to search: ");
+        // UC3
+        System.out.print("\nSearch Vessel By ID: ");
         String searchId = scanner.nextLine();
 
-        Vessel foundVessel = vesselUtil.getVesselByID(searchId);
+        Vessel found = vesselUtil.getVesselByID(searchId);
 
-        if (foundVessel != null) {
+        if (found != null) {
             System.out.println("\nVessel Found:");
-            System.out.println("ID: " + foundVessel.getVesselId());
-            System.out.println("Name: " + foundVessel.getVesselName());
-            System.out.println("Speed: " + foundVessel.getAverageSpeed());
-            System.out.println("Type: " + foundVessel.getVesselType());
+            System.out.println("ID: " + found.getVesselId());
+            System.out.println("Name: " + found.getVesselName());
+            System.out.println("Speed: " + found.getAverageSpeed());
+            System.out.println("Type: " + found.getVesselType());
         } else {
-            System.out.println("Vessel not found with ID: " + searchId);
+            System.out.println("Vessel not found.");
+        }
+
+        // UC4
+        System.out.println("\nHigh Performance Vessel(s):");
+
+        List<Vessel> highList = vesselUtil.getHighPerformanceVessels();
+
+        if (highList.isEmpty()) {
+            System.out.println("No vessels available.");
+        } else {
+            for (Vessel v : highList) {
+                System.out.println("----------------------------");
+                System.out.println("ID: " + v.getVesselId());
+                System.out.println("Name: " + v.getVesselName());
+                System.out.println("Speed: " + v.getAverageSpeed());
+                System.out.println("Type: " + v.getVesselType());
+            }
         }
 
         scanner.close();
