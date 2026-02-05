@@ -3,15 +3,15 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * OceanFleetApp UC1 - Basic Data Model to represent a Vessel
  * OceanFleetApp UC2 - Store Vessel Records Using List
+ * OceanFleetApp UC3 - Retrieve Vessel by Vessel ID
  *
  * @Developer
- * @version 1.0
  * @version 2.0
+ * @version 3.0
  */
 
-// Utility class to manage vessels
+// Utility class
 class VesselUtil {
 
     private List<Vessel> vesselList;
@@ -20,7 +20,7 @@ class VesselUtil {
         vesselList = new ArrayList<>();
     }
 
-    public void addVesselPerformance(Vessel vessel) {
+    public void addVessel(Vessel vessel) {
         vesselList.add(vessel);
         System.out.println("Vessel added successfully!");
     }
@@ -39,9 +39,19 @@ class VesselUtil {
             System.out.println("Type: " + vessel.getVesselType());
         }
     }
+
+    // UC3 — Search by ID
+    public Vessel getVesselByID(String id) {
+        for (Vessel vessel : vesselList) {
+            if (vessel.getVesselId().equalsIgnoreCase(id)) {
+                return vessel;
+            }
+        }
+        return null;
+    }
 }
 
-// Vessel Data Model (Encapsulation)
+// Data Model
 class Vessel {
 
     private String vesselId;
@@ -49,7 +59,6 @@ class Vessel {
     private double averageSpeed;
     private String vesselType;
 
-    // Constructor
     public Vessel(String vesselId, String vesselName, double averageSpeed, String vesselType) {
         this.vesselId = vesselId;
         this.vesselName = vesselName;
@@ -57,41 +66,24 @@ class Vessel {
         this.vesselType = vesselType;
     }
 
-    // Getters & Setters
     public String getVesselId() {
         return vesselId;
-    }
-
-    public void setVesselId(String vesselId) {
-        this.vesselId = vesselId;
     }
 
     public String getVesselName() {
         return vesselName;
     }
 
-    public void setVesselName(String vesselName) {
-        this.vesselName = vesselName;
-    }
-
     public double getAverageSpeed() {
         return averageSpeed;
-    }
-
-    public void setAverageSpeed(double averageSpeed) {
-        this.averageSpeed = averageSpeed;
     }
 
     public String getVesselType() {
         return vesselType;
     }
-
-    public void setVesselType(String vesselType) {
-        this.vesselType = vesselType;
-    }
 }
 
-// Main Application
+// Main App
 public class OceanFleetApp {
 
     public static void main(String[] args) {
@@ -121,11 +113,28 @@ public class OceanFleetApp {
             String type = scanner.nextLine();
 
             Vessel vessel = new Vessel(id, name, speed, type);
-            vesselUtil.addVesselPerformance(vessel);
+            vesselUtil.addVessel(vessel);
         }
 
         System.out.println("\nAll Stored Vessel Records:");
         vesselUtil.displayAllVessels();
+
+        // UC3 Search Feature
+        System.out.println("\nSearch Vessel By ID");
+        System.out.print("Enter Vessel ID to search: ");
+        String searchId = scanner.nextLine();
+
+        Vessel foundVessel = vesselUtil.getVesselByID(searchId);
+
+        if (foundVessel != null) {
+            System.out.println("\nVessel Found:");
+            System.out.println("ID: " + foundVessel.getVesselId());
+            System.out.println("Name: " + foundVessel.getVesselName());
+            System.out.println("Speed: " + foundVessel.getAverageSpeed());
+            System.out.println("Type: " + foundVessel.getVesselType());
+        } else {
+            System.out.println("Vessel not found with ID: " + searchId);
+        }
 
         scanner.close();
     }
